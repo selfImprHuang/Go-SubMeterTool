@@ -7,7 +7,7 @@
 package extra
 
 import (
-	"Go-SubmeterTool/service/tool"
+	"Go-SubMeterTool/service/tool"
 	"fmt"
 	"strconv"
 )

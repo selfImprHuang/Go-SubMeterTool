@@ -7,12 +7,12 @@
 package service
 
 import (
-	"Go-SubmeterTool/service/extra"
-	"Go-SubmeterTool/service/tool"
+	"Go-SubMeterTool/service/extra"
+	"Go-SubMeterTool/service/tool"
 )
 
 func (ts *SubMeterTool) selectFuc(value string, selectSqlFunc func(string) string) (interface{}, error, bool) {
-	selectResultMap, err := ts.engine.QueryInterface(selectSqlFunc(value))
+	selectResultMap, err := ts.Sess.QueryInterface(selectSqlFunc(value))
 	if err != nil || selectResultMap == nil {
 		return nil, err, false
 	}
@@ -32,7 +32,7 @@ func (ts *SubMeterTool) selectFuc(value string, selectSqlFunc func(string) strin
 }
 
 func (ts *SubMeterTool) selectInKeys(sql string) ([]interface{}, error, bool) {
-	m, err := ts.engine.QueryInterface(sql)
+	m, err := ts.Sess.QueryInterface(sql)
 	if err != nil || m == nil {
 		return nil, err, false
 	}

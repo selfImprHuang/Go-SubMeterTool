@@ -7,15 +7,14 @@
 package service
 
 import (
-	"Go-SubmeterTool/service/extra"
+	"Go-SubMeterTool/service/extra"
 	"github.com/go-xorm/xorm"
 	"reflect"
 )
 
 //分表工具对象
 type SubMeterTool struct {
-	sess           xorm.Session //数据库session管理
-	engine         *xorm.Engine
+	Sess           *xorm.Session               //数据库session管理
 	tableIndexFunc func(string, int) string    //支持Index的计算可配
 	tableNameFunc  func(string, string) string //table名称的设置方法
 	subMeterTable  *extra.SubMeterTable        //分表信息对象
@@ -25,9 +24,9 @@ type SubMeterTool struct {
 
 //初始给定的subMeterTable是nil
 //程序会判断nil不进行处理，可清空后重新设置，所以其实一个SubMeterTool是支持复用的
-func NewSubMeterTable(engine *xorm.Engine) *SubMeterTool {
+func NewSubMeterTable(sess *xorm.Session) *SubMeterTool {
 	return &SubMeterTool{
-		engine: engine,
+		Sess: sess,
 		tableIndexFunc: func(s string, i int) string {
 			return extra.GetIndex(s, i)
 		},
@@ -61,4 +60,10 @@ func (ts *SubMeterTool) SetMyTableNameRule(tableNameFunc func(tableName, Index s
 
 func (ts *SubMeterTool) SetMyTableIndexRule(tableIndexFunc func(tableName string, Index int) string) {
 	ts.tableIndexFunc = tableIndexFunc
+}
+
+//可以支持多个语句执行之后进行commit操作
+func (ts *SubMeterTool) Commit() {
+	err := ts.Sess.Commit()
+	extra.CheckErr(err)
 }

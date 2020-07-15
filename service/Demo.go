@@ -6,7 +6,7 @@
 package service
 
 import (
-	"Go-SubmeterTool/service/extra"
+	"Go-SubMeterTool/service/extra"
 	"encoding/json"
 	"github.com/go-xorm/xorm"
 )
@@ -29,9 +29,9 @@ type SubMeterExample struct {
 /*
  * 1.创建一个分表对象
  */
-func NewExample1(engine *xorm.Engine) *Example1 {
+func NewExample1(sess *xorm.Session) *Example1 {
 	//创建分表工具对象
-	tool := NewSubMeterTable(engine)
+	tool := NewSubMeterTable(sess)
 	//创建分表通用参数
 	tool.CreateSubMeterTable("SubMeterExample", "UserId", 3, &SubMeterExample{})
 
@@ -41,6 +41,10 @@ func NewExample1(engine *xorm.Engine) *Example1 {
 	}
 
 	return srv
+}
+
+func (srv *Example1) Commit() {
+	srv.subMeterTool.Commit()
 }
 
 /**
@@ -122,4 +126,8 @@ func (srv *Example1) FindByCommonField(commonField string) []*SubMeterExample {
 
 func (srv *Example1) DeleteByPrimaryKey(key string) {
 	srv.subMeterTool.DeleteByKey(key)
+}
+
+func (srv *Example1) DeleteByKeys(keys []string) {
+	srv.subMeterTool.DeleteByKeys(keys, "UserId")
 }

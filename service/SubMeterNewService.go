@@ -7,8 +7,8 @@
 package service
 
 import (
-	"Go-SubmeterTool/service/extra"
-	"Go-SubmeterTool/service/tool"
+	"Go-SubMeterTool/service/extra"
+	"Go-SubMeterTool/service/tool"
 	"errors"
 	"fmt"
 	"reflect"
@@ -31,7 +31,7 @@ func (ts *SubMeterTool) UpdateByKey(val interface{}, value string) interface{} {
 		//如果当前表有这个数据就进行更新
 		if _, _, has := ts.SelectByKey(value); has {
 			updateByKeySql := ts.updateByKeySql(val, value) //更新语句sql拼接
-			_, err := ts.engine.Query(updateByKeySql)
+			_, err := ts.Sess.Query(updateByKeySql)
 			extra.CheckErr(err)
 			return val
 		}
@@ -50,7 +50,7 @@ func (ts *SubMeterTool) DeleteByKey(value string) {
 	ts.subMeterTable.Index = ts.tableIndexFunc(value, ts.subMeterTable.Mod)
 	ts.subMeterTable.SubTableName = ts.tableNameFunc(ts.subMeterTable.Table, ts.subMeterTable.Index)
 	deleteSql := ts.deleteByKeySql(value)
-	_, err := ts.engine.Query(deleteSql)
+	_, err := ts.Sess.Query(deleteSql)
 	extra.CheckErr(err)
 }
 
@@ -70,7 +70,7 @@ func (ts *SubMeterTool) SelectByKey(value string) (interface{}, error, bool) {
 // 根据不是主键的字段进行查询，不会有多个数据的情况下，需要组合所有的查询结果
 func (ts *SubMeterTool) SelectWithCommonField(value string, keyName string) ([]interface{}, error, bool) {
 	ts.subMeterParamValid()
-	selectResultMap, err := ts.engine.QueryInterface(ts.selectSqlByField(value, keyName, ts.getAllSubMeterTable()))
+	selectResultMap, err := ts.Sess.QueryInterface(ts.selectSqlByField(value, keyName, ts.getAllSubMeterTable()))
 	if err != nil || selectResultMap == nil {
 		return nil, err, false
 	}
@@ -115,7 +115,7 @@ func (ts *SubMeterTool) InsertOne(structObj interface{}, value string) error {
 		//这个地方如果用表注册的方式可以省去一次查询数据库的消耗,这边还有一步就是给table属性赋值
 		ts.assertTableExist(ts.subMeterTable.SubTableName)
 		insertSql := ts.insertSql(fn, val)
-		_, err := ts.engine.Query(insertSql)
+		_, err := ts.Sess.Query(insertSql)
 		extra.CheckErr(err)
 		return nil
 	}
@@ -128,6 +128,9 @@ func (ts *SubMeterTool) InsertOne(structObj interface{}, value string) error {
 func (ts *SubMeterTool) DeleteByKeys(keys []string, keyName string) {
 	ts.subMeterParamValid()
 	tableValueMap := ts.getTableValueMap(keys)
-	deleteSql := ts.deleteInKeys(tableValueMap, keyName)
-
+	sqlList := ts.deleteInKeys(tableValueMap, keyName)
+	for _, sql := range sqlList {
+		_, err := ts.Sess.Query(sql)
+		extra.CheckErr(err)
+	}
 }

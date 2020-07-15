@@ -7,8 +7,8 @@
 package service
 
 import (
-	"Go-SubmeterTool/service/extra"
-	"Go-SubmeterTool/service/tool"
+	"Go-SubMeterTool/service/extra"
+	"Go-SubMeterTool/service/tool"
 	"fmt"
 	"strings"
 )
@@ -125,8 +125,8 @@ func (ts *SubMeterTool) deleteByKeySqlWithOld(value string) string {
 	return fmt.Sprint("delete from ", ts.subMeterTable.Table, " where ", ts.subMeterTable.Pk, " = '", value, "'")
 }
 
-func (ts *SubMeterTool) deleteInKeys(tableValueMap map[string][]string, name string) string {
-	var deleteSql string
+func (ts *SubMeterTool) deleteInKeys(tableValueMap map[string][]string, name string) []string {
+	deleteSql := make([]string, 0)
 
 	for tableName, values := range tableValueMap {
 		if len(values) == 0 {
@@ -134,12 +134,12 @@ func (ts *SubMeterTool) deleteInKeys(tableValueMap map[string][]string, name str
 		}
 		var list string
 		for i, r := range values {
-			list = fmt.Sprintf(" ' %s '", r)
+			list = fmt.Sprintf("%s%s%s%s", list, "'", r, "'")
 			if i != len(values)-1 {
 				list = fmt.Sprint(list, ",")
 			}
 		}
-		deleteSql = fmt.Sprintf(deleteSql, "delete from %s where %s in ( %s );", tableName, name, list)
+		deleteSql = append(deleteSql, fmt.Sprintf("delete from %s where %s in (%s);", tableName, name, list))
 	}
 
 	return deleteSql

@@ -7,8 +7,8 @@
 package main
 
 import (
-	"Go-SubmeterTool/service"
-	"Go-SubmeterTool/service/extra"
+	"Go-SubMeterTool/service"
+	"Go-SubMeterTool/service/extra"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/go-xorm/xorm"
@@ -16,17 +16,30 @@ import (
 
 const (
 	dnDriver = "mysql"
-	dbName   = "root:数据库连接/表名?charset=utf8mb4&parseTime=True&loc=Local"
+	dbName   = "root:Passw0rd@tcp(10.46.191.42:3306)/chuangxinsan_character_0009?charset=utf8mb4&parseTime=True&loc=Local"
 )
 
 func main() {
 	engine, err := xorm.NewEngine(dnDriver, dbName)
+	if engine == nil || err != nil {
+		panic(err)
+	}
+	engine.ShowSQL(true)
 	extra.CheckErr(err)
-	example1 := service.NewExample1(engine)
+	example1 := service.NewExample1(engine.NewSession())
 
 	insertSql(example1) //插入数据库
 	updateSql(example1) //更新数据
 	findSql(example1)   //查询数据
+	deleteSql(example1) //删除数据
+
+	//提交最终的结果
+	example1.Commit()
+}
+
+func deleteSql(example1 *service.Example1) {
+	fmt.Println("删除一组主键相关的数据")
+	example1.DeleteByKeys([]string{"abvcasdas", "3213213", "热舞区4123"})
 }
 
 func findSql(example1 *service.Example1) {

@@ -1,4 +1,4 @@
-module Go-SubmeterTool
+module Go-SubMeterTool
 
 go 1.13
 

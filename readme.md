@@ -33,9 +33,13 @@
 
 2020/7/14 ：整理整合优化代码
 
+2020/7/15 : 工程重命名、优化xorm查询engine为session(可一次性提交增删改sql)、新增根据一组key进行删除方法
+
 
 # 6、注意问题
 在使用的时候要记得引入对应的数据库驱动包，比如我这边的实例是连接mysql，所以引入的是 _ "github.com/go-sql-driver/mysql"
+
+当前的分表采用session的方式，并提供对应的commit方法，使用在操作过程中可以使用当前框架的方法进行Commit或者直接使用session的Commit方法，结果是一样的
 
 
 # 7、mod vendor模式加载包
@@ -48,3 +52,7 @@
 处理步骤如下 ：
 - 通过 go get github.com/kardianos/govendor 命令下载govendor命令
 - 通过 go mod vendor 切换到vendor管理
+
+
+# 8、后续跟新
+sql增删改查的情况很多，相应的加上分表，需要处理的具体场景也不一样，这部分的东西只能说后面遇到之后再进行补充，没办法一下子全部弄上去

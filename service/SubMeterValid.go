@@ -18,7 +18,7 @@ func (ts *SubMeterTool) assertTableExist(table string) {
 		}
 	}
 	//db查询判断表是否存在
-	dec, notExist := ts.engine.Query(fmt.Sprint("show tables like ", "'", table, "'"))
+	dec, notExist := ts.Sess.Query(fmt.Sprint("show tables like ", "'", table, "'"))
 	if notExist != nil || dec == nil {
 		panic(fmt.Sprintf("%s 表不存在，报错信息%v", table, notExist))
 	}

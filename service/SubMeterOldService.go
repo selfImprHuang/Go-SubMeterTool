@@ -6,7 +6,7 @@
 
 package service
 
-import "Go-SubmeterTool/service/extra"
+import "Go-SubMeterTool/service/extra"
 
 /*
  * @description 删除新表并且把旧表数据删除
@@ -15,7 +15,7 @@ func (ts *SubMeterTool) DeleteByKeyWithOld(value string) {
 	ts.DeleteByKey(value)
 	ts.assertTableExist(ts.subMeterTable.Table)
 	deleteSql := ts.deleteByKeySqlWithOld(value)
-	_, err := ts.engine.Query(deleteSql)
+	_, err := ts.Sess.Query(deleteSql)
 	extra.CheckErr(err)
 }
 
@@ -65,6 +65,6 @@ func (ts *SubMeterTool) SelectInKeysWithOld(value []string) ([]interface{}, erro
 }
 
 //从新的分表和旧表中查询对应的数据
-func (ts *SubMeterTool) SelectWithCommonFieldWithOld() {
-
+func (ts *SubMeterTool) SelectWithCommonFieldWithOld(value string, keyName string) {
+	ts.SelectWithCommonField(value, keyName)
 }
